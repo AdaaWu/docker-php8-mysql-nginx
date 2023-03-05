@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  
+  db:
+    image: mysql:latest
+    container_name: mysqlforphp8my
+    restart: always
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - app-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=php8	  
+  web:
+    image: nginx:latest
+    container_name: php_nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - app-network
+    depends_on:
+      - db
+  php:
+    image: php:fpm
+    container_name: my_php
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - app-network
+    depends_on:
+      - db
+networks:
+  app-network:
